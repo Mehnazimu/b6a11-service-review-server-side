@@ -34,6 +34,13 @@ async function run() {
             res.send(items);
         });
 
+        app.get('/limiteditems', async (req, res) => {
+            const query = {}
+            const cursor = itemsCollection.find(query);
+            const limiteditems = await cursor.limit(3).toArray();
+            res.send(limiteditems);
+        });
+
         app.get('/items/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
