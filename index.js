@@ -24,6 +24,7 @@ async function run() {
     try {
         const itemsCollection = client.db('onlineBakery').collection('cakes');
         const reviewCollection = client.db('onlineBakery').collection('reviews');
+        const orderCollection = client.db('onlineBakery').collection('orders');
 
 
         app.get('/items', async (req, res) => {
@@ -39,6 +40,36 @@ async function run() {
             const item = await itemsCollection.findOne(query);
             res.send(item);
         })
+
+        app.get('/items/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const item = await itemsCollection.findOne(query);
+            res.send(item);
+        })
+        
+        //orders api
+        app.post('/orders', async(req,res)=>{
+            const order = req.body;
+            const result = await orderCollection.insertOne(order);
+            res.send(result);
+        })
+
+        app.get('/orders', async (req, res) => {
+            let query = {};
+
+            if(req.query.email){
+                query={
+                    email:req.query.email
+                }
+            }
+            const cursor = orderCollection.find(query);
+            const orders = await cursor.toArray();
+            res.send(orders);
+        });
+
+
+
 
         // reviews api
         app.get('/reviews', async (req, res) => {
